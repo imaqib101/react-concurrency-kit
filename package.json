@@ -1,0 +1,57 @@
+{
+  "name": "@imaqib101/react-concurrency-kit",
+  "version": "1.0.0",
+  "description": "Production React 18/19 custom hooks & concurrency primitives for resilient data streaming, optimistic UI mutations, and windowed virtualization",
+  "author": "Mohammed Aqib <62829012+imaqib101@users.noreply.github.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/imaqib101/react-concurrency-kit#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imaqib101/react-concurrency-kit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/imaqib101/react-concurrency-kit/issues"
+  },
+  "keywords": [
+    "react",
+    "react18",
+    "react19",
+    "hooks",
+    "concurrency",
+    "streaming",
+    "optimistic-ui",
+    "virtualization",
+    "typescript",
+    "vitest"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/ --ext .ts,.tsx"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^16.0.1",
+    "@types/node": "^22.7.5",
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.3.0",
+    "happy-dom": "^15.7.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tsup": "^8.3.0",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.2"
+  }
+}
