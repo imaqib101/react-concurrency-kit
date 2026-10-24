@@ -24,3 +24,9 @@ export {
   type UseVirtualWindowReturn,
   type VirtualItem,
 } from './hooks/useVirtualWindow';
+
+export {
+  useThrottledCallback,
+  type ThrottledFunction,
+  type ThrottleOptions,
+} from './hooks/useThrottledCallback';

@@ -168,6 +168,29 @@ function SearchInput({ onSearch }) {
 
 ---
 
+### 5. `useThrottledCallback`
+High-performance throttle hook with configurable leading/trailing execution edges, manual flush, cancel, and pending inspection for high-frequency window scroll, resize, or viewport tracking events.
+
+```tsx
+import { useThrottledCallback } from '@imaqib101/react-concurrency-kit';
+
+function ViewportTracker({ onPositionChange }) {
+  const throttledUpdate = useThrottledCallback(
+    (scrollPos: number) => onPositionChange(scrollPos),
+    100,
+    { leading: true, trailing: true }
+  );
+
+  return (
+    <div onScroll={(e) => throttledUpdate(e.currentTarget.scrollTop)}>
+      {/* Content */}
+    </div>
+  );
+}
+```
+
+---
+
 ## 🧪 Testing & Quality Suite
 
 Every hook is validated with 100% test coverage using **Vitest** and **@testing-library/react** in a happy-dom environment.
