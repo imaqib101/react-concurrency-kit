@@ -191,7 +191,41 @@ function ViewportTracker({ onPositionChange }) {
 
 ---
 
-## 🧪 Testing & Quality Suite
+### 6. `useAsyncQueue`
+Concurrency-limited asynchronous task worker queue with batch submission, dynamic task cancellation via `AbortSignal`, pause/resume capabilities, failure retries, and real-time progress tracking:
+
+```tsx
+import { useAsyncQueue } from '@imaqib101/react-concurrency-kit';
+
+function BatchUploader({ files }) {
+  const {
+    items,
+    progress,
+    activeCount,
+    pendingCount,
+    add,
+    pause,
+    resume,
+    abortAll,
+  } = useAsyncQueue<File, UploadResult>({
+    taskFn: async (file, signal) => uploadFileToServer(file, signal),
+    concurrency: 3, // maximum 3 concurrent uploads
+    autoStart: true,
+  });
+
+  return (
+    <div>
+      <button onClick={() => add(files)}>Queue {files.length} Files</button>
+      <div>Progress: {progress}% (Active: {activeCount}, Queued: {pendingCount})</div>
+      <button onClick={pause}>Pause</button>
+      <button onClick={resume}>Resume</button>
+      <button onClick={abortAll}>Cancel All</button>
+    </div>
+  );
+}
+```
+
+---
 
 Every hook is validated with 100% test coverage using **Vitest** and **@testing-library/react** in a happy-dom environment.
 

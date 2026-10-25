@@ -30,3 +30,11 @@ export {
   type ThrottledFunction,
   type ThrottleOptions,
 } from './hooks/useThrottledCallback';
+
+export {
+  useAsyncQueue,
+  type QueueItemStatus,
+  type QueueItem,
+  type UseAsyncQueueOptions,
+  type UseAsyncQueueReturn,
+} from './hooks/useAsyncQueue';
