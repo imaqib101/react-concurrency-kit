@@ -38,3 +38,7 @@ export {
   type UseAsyncQueueOptions,
   type UseAsyncQueueReturn,
 } from './hooks/useAsyncQueue';
+
+export {
+  usePrevious,
+} from './hooks/usePrevious';
