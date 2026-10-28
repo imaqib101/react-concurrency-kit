@@ -153,7 +153,9 @@ export function useEventStream<T = string>(
           setData(parsed);
           setHistory((prev) => {
             const next = [...prev, parsed];
-            return next.length > maxHistoryLength ? next.slice(next.length - maxHistoryLength) : next;
+            return next.length > maxHistoryLength
+              ? next.slice(next.length - maxHistoryLength)
+              : next;
           });
           optionsRef.current.onMessage?.(parsed, e);
         } catch (parseErr) {

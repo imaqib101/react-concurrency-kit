@@ -25,13 +25,7 @@ export interface UseVirtualWindowReturn {
 }
 
 export function useVirtualWindow(options: UseVirtualWindowOptions): UseVirtualWindowReturn {
-  const {
-    totalCount,
-    itemHeight,
-    containerHeight,
-    overscan = 3,
-    initialScrollTop = 0,
-  } = options;
+  const { totalCount, itemHeight, containerHeight, overscan = 3, initialScrollTop = 0 } = options;
 
   const [scrollTop, setScrollTop] = useState(initialScrollTop);
   const isFunctionHeight = typeof itemHeight === 'function';
@@ -43,7 +37,9 @@ export function useVirtualWindow(options: UseVirtualWindowOptions): UseVirtualWi
     let runningOffset = 0;
 
     for (let i = 0; i < totalCount; i++) {
-      const size = isFunctionHeight ? (itemHeight as (idx: number) => number)(i) : (itemHeight as number);
+      const size = isFunctionHeight
+        ? (itemHeight as (idx: number) => number)(i)
+        : (itemHeight as number);
       itemOffsets[i] = runningOffset;
       itemSizes[i] = size;
       runningOffset += size;

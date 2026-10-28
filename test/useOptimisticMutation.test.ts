@@ -5,9 +5,12 @@ import { useOptimisticMutation } from '../src/hooks/useOptimisticMutation';
 describe('useOptimisticMutation', () => {
   it('initializes with default data and states', () => {
     const { result } = renderHook(() =>
-      useOptimisticMutation({ count: 0 }, {
-        mutationFn: async (vars: { amount: number }) => ({ count: vars.amount }),
-      })
+      useOptimisticMutation(
+        { count: 0 },
+        {
+          mutationFn: async (vars: { amount: number }) => ({ count: vars.amount }),
+        }
+      )
     );
 
     expect(result.current.data).toEqual({ count: 0 });
