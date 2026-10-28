@@ -2,3 +2,9 @@ node_modules/
 dist/
 *.log
 coverage/
+.DS_Store
+.env
+.env.*
+*.tsbuildinfo
+.vscode/
+.idea/
