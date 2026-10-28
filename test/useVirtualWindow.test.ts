@@ -63,3 +63,57 @@ describe('useVirtualWindow', () => {
     expect(result.current.virtualItems[1].size).toBe(60);
   });
 });
+
+describe('useVirtualWindow edge cases', () => {
+  it('supports variable item heights', () => {
+    const { result } = renderHook(() =>
+      useVirtualWindow({
+        totalCount: 4,
+        itemHeight: (i) => (i + 1) * 10, // 10, 20, 30, 40
+        containerHeight: 100,
+        overscan: 0,
+      })
+    );
+    expect(result.current.totalHeight).toBe(100);
+    expect(result.current.virtualItems.map((v) => [v.start, v.size])).toEqual([
+      [0, 10],
+      [10, 20],
+      [30, 30],
+      [60, 40],
+    ]);
+  });
+
+  it('returns an empty window for zero items or zero container height', () => {
+    const empty = renderHook(() =>
+      useVirtualWindow({ totalCount: 0, itemHeight: 10, containerHeight: 100 })
+    );
+    expect(empty.result.current.virtualItems).toEqual([]);
+    expect(empty.result.current.totalHeight).toBe(0);
+
+    const hidden = renderHook(() =>
+      useVirtualWindow({ totalCount: 10, itemHeight: 10, containerHeight: 0 })
+    );
+    expect(hidden.result.current.virtualItems).toEqual([]);
+  });
+
+  it('scrollToIndex clamps the index and returns the target offset', () => {
+    const { result } = renderHook(() =>
+      useVirtualWindow({ totalCount: 10, itemHeight: 20, containerHeight: 60, overscan: 0 })
+    );
+    let offset = -1;
+    act(() => {
+      offset = result.current.scrollToIndex(5);
+    });
+    expect(offset).toBe(100);
+    expect(result.current.virtualItems[0].index).toBe(5);
+
+    act(() => {
+      offset = result.current.scrollToIndex(999);
+    });
+    expect(offset).toBe(180);
+    act(() => {
+      offset = result.current.scrollToIndex(-3);
+    });
+    expect(offset).toBe(0);
+  });
+});

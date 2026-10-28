@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   restores committed data and clears the pending flags.
 - `useAsyncQueue`: a pending task could be started more than once when the queue was
   processed several times before React re-rendered.
+- `useVirtualWindow`: an item ending exactly at the scroll offset was treated as the first
+  visible item, rendering one extra row at the top.
 
 ## [1.0.0]
 
