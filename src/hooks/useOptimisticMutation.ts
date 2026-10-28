@@ -46,26 +46,37 @@ export function useOptimisticMutation<TData, TVariables>(
   const committedDataRef = useRef<TData>(initialData);
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  const abort = useCallback(() => {
+  // Cancels the in-flight request (if any) and marks it stale so that its
+  // eventual settlement can no longer touch state.
+  const cancelInFlight = useCallback(() => {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
       abortControllerRef.current = null;
     }
   }, []);
 
+  const abort = useCallback(() => {
+    if (!abortControllerRef.current) return;
+    cancelInFlight();
+    setData(committedDataRef.current);
+    setIsMutating(false);
+    setIsOptimistic(false);
+  }, [cancelInFlight]);
+
   const reset = useCallback(() => {
-    abort();
+    cancelInFlight();
     setData(committedDataRef.current);
     setIsMutating(false);
     setIsOptimistic(false);
     setError(null);
-  }, [abort]);
+  }, [cancelInFlight]);
 
   const mutate = useCallback(
     async (variables: TVariables): Promise<TData> => {
-      abort();
+      cancelInFlight();
       const controller = new AbortController();
       abortControllerRef.current = controller;
+      const isCurrent = () => abortControllerRef.current === controller;
 
       const previousCommitted = committedDataRef.current;
       setError(null);
@@ -79,6 +90,9 @@ export function useOptimisticMutation<TData, TVariables>(
 
       try {
         const result = await mutationFn(variables, controller.signal);
+        // A newer mutation, abort() or reset() superseded this one: do not
+        // commit its result or fire callbacks.
+        if (!isCurrent()) return result;
         committedDataRef.current = result;
         setData(result);
         setIsOptimistic(false);
@@ -88,8 +102,9 @@ export function useOptimisticMutation<TData, TVariables>(
         return result;
       } catch (err: unknown) {
         const mutationError = err instanceof Error ? err : new Error(String(err));
+        if (!isCurrent()) throw mutationError;
         if (rollbackOnError) {
-          setData(previousCommitted);
+          setData(committedDataRef.current);
         }
         setIsOptimistic(false);
         setIsMutating(false);
@@ -98,12 +113,12 @@ export function useOptimisticMutation<TData, TVariables>(
         onSettled?.(undefined, mutationError, variables);
         throw mutationError;
       } finally {
-        if (abortControllerRef.current === controller) {
+        if (isCurrent()) {
           abortControllerRef.current = null;
         }
       }
     },
-    [abort, mutationFn, optimisticUpdate, onSuccess, onError, onSettled, rollbackOnError]
+    [cancelInFlight, mutationFn, optimisticUpdate, onSuccess, onError, onSettled, rollbackOnError]
   );
 
   return {

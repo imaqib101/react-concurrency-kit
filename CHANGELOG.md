@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Repository tooling: ESLint, Prettier, EditorConfig, CI workflow, contributing guide.
 
+### Fixed
+- `useOptimisticMutation`: a superseded or aborted mutation that settled late could
+  overwrite newer data and fire callbacks. Stale results are now ignored, and `abort()`
+  restores committed data and clears the pending flags.
+
 ## [1.0.0]
 
 ### Added
