@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `useOptimisticMutation`: a superseded or aborted mutation that settled late could
   overwrite newer data and fire callbacks. Stale results are now ignored, and `abort()`
   restores committed data and clears the pending flags.
+- `useAsyncQueue`: a pending task could be started more than once when the queue was
+  processed several times before React re-rendered.
 
 ## [1.0.0]
 

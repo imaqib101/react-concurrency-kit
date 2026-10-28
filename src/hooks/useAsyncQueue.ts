@@ -85,6 +85,10 @@ export function useAsyncQueue<TInput, TOutput>(
   onAllCompleteRef.current = onAllComplete;
 
   const activeControllersRef = useRef<Map<string, AbortController>>(new Map());
+  // Ids that have been handed to taskFn. itemsRef lags behind until React
+  // re-renders, so this prevents a task from being started twice when
+  // processQueue runs several times in between.
+  const startedIdsRef = useRef<Set<string>>(new Set());
 
   const processQueue = useCallback(() => {
     if (isPausedRef.current) return;
@@ -96,7 +100,9 @@ export function useAsyncQueue<TInput, TOutput>(
     if (availableSlots <= 0) return;
 
     // Find next pending items
-    const pendingItems = currentItems.filter((item) => item.status === 'pending');
+    const pendingItems = currentItems.filter(
+      (item) => item.status === 'pending' && !startedIdsRef.current.has(item.id)
+    );
     if (pendingItems.length === 0) {
       if (activeCount === 0 && isRunningRef.current) {
         isRunningRef.current = false;
@@ -117,6 +123,7 @@ export function useAsyncQueue<TInput, TOutput>(
     tasksToStart.forEach((task) => {
       const abortController = new AbortController();
       activeControllersRef.current.set(task.id, abortController);
+      startedIdsRef.current.add(task.id);
 
       const startTime = Date.now();
 
@@ -256,12 +263,18 @@ export function useAsyncQueue<TInput, TOutput>(
   const clear = useCallback(() => {
     abortAll();
     itemsRef.current = [];
+    startedIdsRef.current.clear();
     setItems([]);
     setIsRunning(false);
     isRunningRef.current = false;
   }, [abortAll]);
 
   const retryFailed = useCallback(() => {
+    itemsRef.current.forEach((it) => {
+      if (it.status === 'failed' || it.status === 'aborted') {
+        startedIdsRef.current.delete(it.id);
+      }
+    });
     setItems((prev) =>
       prev.map((it) =>
         it.status === 'failed' || it.status === 'aborted'
