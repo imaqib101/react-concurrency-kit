@@ -1,9 +1,8 @@
 # ⚡ @imaqib101/react-concurrency-kit
 
-[![CI](https://github.com/imaqib101/react-concurrency-kit/actions/workflows/ci.yml/badge.svg)](https://github.com/imaqib101/react-concurrency-kit/actions)
-[![npm version](https://img.shields.io/badge/npm-v1.0.0-blue?style=flat-square&logo=npm)](https://github.com/imaqib101/react-concurrency-kit)
+[![CI](https://github.com/imaqib101/react-concurrency-kit/actions/workflows/ci.yml/badge.svg)](https://github.com/imaqib101/react-concurrency-kit/actions/workflows/ci.yml)
 [![React 18 & 19 Ready](https://img.shields.io/badge/React-18%20%7C%2019-61dafb?style=flat-square&logo=react)](https://react.dev)
-[![TypeScript 5.x](https://img.shields.io/badge/TypeScript-5.6-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=flat-square)](LICENSE)
 
 > **Production React 18 & 19 custom hooks & concurrency primitives for resilient data streaming, optimistic UI mutations with rollback guards, and high-performance layout virtualization.**
@@ -232,18 +231,36 @@ function BatchUploader({ files }) {
 
 ---
 
-Every hook is validated with 100% test coverage using **Vitest** and **@testing-library/react** in a happy-dom environment.
+### 7. `usePrevious`
+Returns the value a prop or state had on the previous render (`undefined` on the first render).
+
+```tsx
+import { usePrevious } from '@imaqib101/react-concurrency-kit';
+
+function Counter({ count }: { count: number }) {
+  const previous = usePrevious(count);
+  return <p>Now: {count}, before: {previous ?? 'n/a'}</p>;
+}
+```
+
+---
+
+## 🧪 Development
+
+Requires Node.js 18 or newer.
 
 ```bash
-# Run unit tests
-npm test
-
-# Run type check
-npm run typecheck
-
-# Build bundle
-npm run build
+npm ci                 # install
+npm test               # run the Vitest suite
+npm run test:coverage  # tests with coverage report
+npm run lint           # ESLint
+npm run format:check   # Prettier (use `npm run format` to fix)
+npm run typecheck      # tsc --noEmit
+npm run build          # bundle CJS + ESM + types into dist/
 ```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the contribution workflow and
+[CHANGELOG.md](CHANGELOG.md) for release notes.
 
 ---
 
