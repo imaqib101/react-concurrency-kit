@@ -196,3 +196,51 @@ describe('useAsyncQueue', () => {
     expect(result.current.isRunning).toBe(false);
   });
 });
+
+describe('useAsyncQueue scheduling', () => {
+  it('never starts the same task twice when processing is triggered repeatedly', () => {
+    vi.useFakeTimers();
+    try {
+      const taskFn = vi.fn(() => new Promise<number>(() => {}));
+      const { result } = renderHook(() =>
+        useAsyncQueue<number, number>({ taskFn, concurrency: 3, autoStart: true })
+      );
+
+      act(() => {
+        result.current.add([1]);
+        result.current.resume();
+        result.current.start();
+        // All scheduled processQueue calls fire before React re-renders.
+        vi.advanceTimersByTime(0);
+      });
+
+      expect(taskFn).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+});
+
+describe('useAsyncQueue retry', () => {
+  it('re-runs failed items after retryFailed()', async () => {
+    let attempts = 0;
+    const taskFn = vi.fn(async (input: number) => {
+      attempts += 1;
+      if (attempts === 1) throw new Error('boom');
+      return input;
+    });
+    const { result } = renderHook(() => useAsyncQueue<number, number>({ taskFn }));
+
+    act(() => {
+      result.current.add(1);
+    });
+    await vi.waitFor(() => expect(result.current.failedCount).toBe(1));
+
+    act(() => {
+      result.current.retryFailed();
+    });
+    await vi.waitFor(() => expect(result.current.completedCount).toBe(1));
+    expect(taskFn).toHaveBeenCalledTimes(2);
+    expect(result.current.failedCount).toBe(0);
+  });
+});
