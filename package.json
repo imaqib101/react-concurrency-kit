@@ -18,17 +18,23 @@
     "react19",
     "hooks",
     "concurrency",
-    "streaming",
+    "server-sent-events",
+    "sse",
     "optimistic-ui",
     "virtualization",
-    "typescript",
-    "vitest"
+    "debounce",
+    "throttle",
+    "async-queue",
+    "typescript"
   ],
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
   ],
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts",
@@ -38,7 +44,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "prepublishOnly": "npm run lint && npm run typecheck && npm test && npm run build"
   },
   "peerDependencies": {
     "react": ">=18.0.0",
@@ -50,6 +57,7 @@
     "@types/node": "^22.7.5",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.0",
+    "@vitest/coverage-v8": "^2.1.9",
     "eslint": "^9.39.5",
     "eslint-plugin-react-hooks": "^5.2.0",
     "globals": "^17.13.0",
@@ -61,5 +69,22 @@
     "typescript": "^5.6.3",
     "typescript-eslint": "^8.72.1",
     "vitest": "^2.1.2"
+  },
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18"
   }
 }
