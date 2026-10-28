@@ -16,7 +16,10 @@ export interface OptimisticMutationState<TData> {
   error: Error | null;
 }
 
-export interface UseOptimisticMutationReturn<TData, TVariables> extends OptimisticMutationState<TData> {
+export interface UseOptimisticMutationReturn<
+  TData,
+  TVariables,
+> extends OptimisticMutationState<TData> {
   mutate: (variables: TVariables) => Promise<TData>;
   reset: () => void;
   abort: () => void;

@@ -12,9 +12,10 @@
 
 ## 🎯 Motivation & Design Philosophy
 
-Modern enterprise web frontends demand seamless responsiveness under unpredictable network conditions, high-frequency realtime streams (SSE / WebSockets), and high-cardinality UI rendering. 
+Modern enterprise web frontends demand seamless responsiveness under unpredictable network conditions, high-frequency realtime streams (SSE / WebSockets), and high-cardinality UI rendering.
 
 `react-concurrency-kit` provides production-hardened primitives engineered for:
+
 1. **Zero Jank & Concurrent Safety:** Seamlessly interoperates with React 18/19 concurrent rendering, transitions, and abort signals.
 2. **Deterministic Optimism:** Instant UI updates with atomic rollback guarantees upon network rejection.
 3. **Resilient Network Primitives:** Auto-reconnecting Server-Sent Event (SSE) streams with exponential jitter backoff and heartbeat recovery.
@@ -37,17 +38,23 @@ yarn add @imaqib101/react-concurrency-kit
 ## 🚀 Primitives Overview
 
 ### 1. `useOptimisticMutation`
+
 Performs optimistic UI state transitions before server resolution, providing automatic rollback on failure, cancellation signals, and execution status.
 
 ```tsx
 import { useOptimisticMutation } from '@imaqib101/react-concurrency-kit';
 
 function TaskList({ initialTasks }) {
-  const { data: tasks, mutate, isMutating, isOptimistic } = useOptimisticMutation(initialTasks, {
+  const {
+    data: tasks,
+    mutate,
+    isMutating,
+    isOptimistic,
+  } = useOptimisticMutation(initialTasks, {
     // 1. Optimistic transition applied instantly
     optimisticUpdate: (current, newTask) => [
       ...current,
-      { ...newTask, id: 'temp-id', pending: true }
+      { ...newTask, id: 'temp-id', pending: true },
     ],
     // 2. Real async mutation
     mutationFn: async (newTask, signal) => {
@@ -69,7 +76,9 @@ function TaskList({ initialTasks }) {
       <button onClick={() => mutate({ title: 'Deploy to Edge' })}>Add Task</button>
       {isOptimistic && <span className="badge">Syncing...</span>}
       <ul>
-        {tasks.map(t => <li key={t.id}>{t.title}</li>)}
+        {tasks.map((t) => (
+          <li key={t.id}>{t.title}</li>
+        ))}
       </ul>
     </div>
   );
@@ -79,13 +88,17 @@ function TaskList({ initialTasks }) {
 ---
 
 ### 2. `useEventStream`
+
 Production Server-Sent Events (SSE) streaming hook with built-in heartbeat monitor, automatic reconnect with exponential backoff & jitter, and historical window buffering.
 
 ```tsx
 import { useEventStream } from '@imaqib101/react-concurrency-kit';
 
 function MetricsStream() {
-  const { status, data, history, disconnect, connect } = useEventStream<{ cpu: number; mem: number }>({
+  const { status, data, history, disconnect, connect } = useEventStream<{
+    cpu: number;
+    mem: number;
+  }>({
     url: '/api/v1/metrics/stream',
     heartbeatTimeoutMs: 30000,
     maxRetries: 5,
@@ -97,7 +110,11 @@ function MetricsStream() {
     <div>
       <div className={`status-dot ${status}`} />
       <p>Status: {status}</p>
-      {data && <div>CPU: {data.cpu}% | Memory: {data.mem}MB</div>}
+      {data && (
+        <div>
+          CPU: {data.cpu}% | Memory: {data.mem}MB
+        </div>
+      )}
     </div>
   );
 }
@@ -106,6 +123,7 @@ function MetricsStream() {
 ---
 
 ### 3. `useVirtualWindow`
+
 High-speed virtual window calculator utilizing binary-search index computation. Supports both fixed and variable element heights with custom overscan buffers.
 
 ```tsx
@@ -144,24 +162,19 @@ function HeavyLogViewer({ logs }) {
 ---
 
 ### 4. `useDebouncedCallback`
+
 Configurable debouncer with leading/trailing guarantees, max-wait deadline execution, and manual flush/cancel APIs.
 
 ```tsx
 import { useDebouncedCallback } from '@imaqib101/react-concurrency-kit';
 
 function SearchInput({ onSearch }) {
-  const debouncedSearch = useDebouncedCallback(
-    (query: string) => onSearch(query),
-    300,
-    { maxWaitMs: 1000 }
-  );
+  const debouncedSearch = useDebouncedCallback((query: string) => onSearch(query), 300, {
+    maxWaitMs: 1000,
+  });
 
   return (
-    <input
-      type="text"
-      placeholder="Search..."
-      onChange={(e) => debouncedSearch(e.target.value)}
-    />
+    <input type="text" placeholder="Search..." onChange={(e) => debouncedSearch(e.target.value)} />
   );
 }
 ```
@@ -169,6 +182,7 @@ function SearchInput({ onSearch }) {
 ---
 
 ### 5. `useThrottledCallback`
+
 High-performance throttle hook with configurable leading/trailing execution edges, manual flush, cancel, and pending inspection for high-frequency window scroll, resize, or viewport tracking events.
 
 ```tsx
@@ -181,42 +195,33 @@ function ViewportTracker({ onPositionChange }) {
     { leading: true, trailing: true }
   );
 
-  return (
-    <div onScroll={(e) => throttledUpdate(e.currentTarget.scrollTop)}>
-      {/* Content */}
-    </div>
-  );
+  return <div onScroll={(e) => throttledUpdate(e.currentTarget.scrollTop)}>{/* Content */}</div>;
 }
 ```
 
 ---
 
 ### 6. `useAsyncQueue`
+
 Concurrency-limited asynchronous task worker queue with batch submission, dynamic task cancellation via `AbortSignal`, pause/resume capabilities, failure retries, and real-time progress tracking:
 
 ```tsx
 import { useAsyncQueue } from '@imaqib101/react-concurrency-kit';
 
 function BatchUploader({ files }) {
-  const {
-    items,
-    progress,
-    activeCount,
-    pendingCount,
-    add,
-    pause,
-    resume,
-    abortAll,
-  } = useAsyncQueue<File, UploadResult>({
-    taskFn: async (file, signal) => uploadFileToServer(file, signal),
-    concurrency: 3, // maximum 3 concurrent uploads
-    autoStart: true,
-  });
+  const { items, progress, activeCount, pendingCount, add, pause, resume, abortAll } =
+    useAsyncQueue<File, UploadResult>({
+      taskFn: async (file, signal) => uploadFileToServer(file, signal),
+      concurrency: 3, // maximum 3 concurrent uploads
+      autoStart: true,
+    });
 
   return (
     <div>
       <button onClick={() => add(files)}>Queue {files.length} Files</button>
-      <div>Progress: {progress}% (Active: {activeCount}, Queued: {pendingCount})</div>
+      <div>
+        Progress: {progress}% (Active: {activeCount}, Queued: {pendingCount})
+      </div>
       <button onClick={pause}>Pause</button>
       <button onClick={resume}>Resume</button>
       <button onClick={abortAll}>Cancel All</button>
@@ -244,9 +249,10 @@ npm run build
 
 ## 👤 Author & Maintainer
 
-**Mohammed Aqib**  
-- GitHub: [@imaqib101](https://github.com/imaqib101)  
-- Location: Bengaluru, India  
+**Mohammed Aqib**
+
+- GitHub: [@imaqib101](https://github.com/imaqib101)
+- Location: Bengaluru, India
 - Focus: Senior Full-Stack & Frontend Architecture (React, Vue 3, TypeScript, Distributed Systems)
 
 ---

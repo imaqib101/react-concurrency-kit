@@ -7,10 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 - Repository tooling: ESLint, Prettier, EditorConfig, CI workflow, contributing guide.
 
 ## [1.0.0]
 
 ### Added
+
 - `useOptimisticMutation`, `useEventStream`, `useVirtualWindow`,
   `useDebouncedCallback`, `useThrottledCallback`, `useAsyncQueue`, `usePrevious`.

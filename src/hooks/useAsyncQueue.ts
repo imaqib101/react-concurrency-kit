@@ -140,9 +140,7 @@ export function useAsyncQueue<TInput, TOutput>(
             completedAt,
           };
 
-          setItems((prev) =>
-            prev.map((it) => (it.id === task.id ? updatedItem : it))
-          );
+          setItems((prev) => prev.map((it) => (it.id === task.id ? updatedItem : it)));
 
           if (onItemCompleteRef.current) {
             onItemCompleteRef.current(updatedItem);
@@ -152,8 +150,7 @@ export function useAsyncQueue<TInput, TOutput>(
           activeControllersRef.current.delete(task.id);
           const completedAt = Date.now();
           const isAborted =
-            abortController.signal.aborted ||
-            (err instanceof Error && err.name === 'AbortError');
+            abortController.signal.aborted || (err instanceof Error && err.name === 'AbortError');
 
           const finalStatus: QueueItemStatus = isAborted ? 'aborted' : 'failed';
           const errorObj = err instanceof Error ? err : new Error(String(err));
@@ -166,9 +163,7 @@ export function useAsyncQueue<TInput, TOutput>(
             completedAt,
           };
 
-          setItems((prev) =>
-            prev.map((it) => (it.id === task.id ? updatedItem : it))
-          );
+          setItems((prev) => prev.map((it) => (it.id === task.id ? updatedItem : it)));
 
           if (!isAborted && onItemErrorRef.current) {
             onItemErrorRef.current(updatedItem, errorObj);
@@ -281,11 +276,12 @@ export function useAsyncQueue<TInput, TOutput>(
 
   // Cleanup controllers on unmount
   useEffect(() => {
+    const controllers = activeControllersRef.current;
     return () => {
-      activeControllersRef.current.forEach((controller) => {
+      controllers.forEach((controller) => {
         controller.abort();
       });
-      activeControllersRef.current.clear();
+      controllers.clear();
     };
   }, []);
 
