@@ -232,6 +232,7 @@ function BatchUploader({ files }) {
 ---
 
 ### 7. `usePrevious`
+
 Returns the value a prop or state had on the previous render (`undefined` on the first render).
 
 ```tsx
@@ -239,7 +240,11 @@ import { usePrevious } from '@imaqib101/react-concurrency-kit';
 
 function Counter({ count }: { count: number }) {
   const previous = usePrevious(count);
-  return <p>Now: {count}, before: {previous ?? 'n/a'}</p>;
+  return (
+    <p>
+      Now: {count}, before: {previous ?? 'n/a'}
+    </p>
+  );
 }
 ```
 
