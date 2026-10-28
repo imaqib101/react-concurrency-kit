@@ -63,7 +63,7 @@ export function useVirtualWindow(options: UseVirtualWindowOptions): UseVirtualWi
         const itemStart = offsets[mid];
         const itemEnd = itemStart + sizes[mid];
 
-        if (itemEnd < top) {
+        if (itemEnd <= top) {
           low = mid + 1;
         } else if (itemStart > top) {
           high = mid - 1;
