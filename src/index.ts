@@ -19,6 +19,12 @@ export {
 } from './hooks/useDebouncedCallback';
 
 export {
+  useDebouncedState,
+  type UseDebouncedStateOptions,
+  type DebouncedStateControls,
+} from './hooks/useDebouncedState';
+
+export {
   useVirtualWindow,
   type UseVirtualWindowOptions,
   type UseVirtualWindowReturn,
@@ -42,3 +48,7 @@ export {
 export {
   usePrevious,
 } from './hooks/usePrevious';
+
+export {
+  useToggle,
+} from './hooks/useToggle';

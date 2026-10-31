@@ -227,6 +227,55 @@ function BatchUploader({ files }) {
 
 ---
 
+### 7. `useDebouncedState`
+Dual-state synchronization: an immediate value for zero-lag controlled UI inputs, alongside a debounced value that settles after a specified delay for expensive operations, complete with `flush`, `cancel`, `isPending`, and `reset` controls.
+
+```tsx
+import { useDebouncedState } from '@imaqib101/react-concurrency-kit';
+
+function SearchFilter({ onFilterChange }) {
+  const [debouncedQuery, setQuery, { immediate, isPending, flush, reset }] = useDebouncedState('', 300);
+
+  return (
+    <div>
+      <input
+        type="text"
+        value={immediate}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Type to filter..."
+      />
+      {isPending() && <span>Typing...</span>}
+      <button onClick={flush}>Search Now</button>
+      <button onClick={() => reset('')}>Clear</button>
+    </div>
+  );
+}
+```
+
+---
+
+### 8. `useToggle`
+Ergonomic boolean toggle state manager with support for explicit truthy/falsy overrides.
+
+```tsx
+import { useToggle } from '@imaqib101/react-concurrency-kit';
+
+function ModalToggle() {
+  const [isOpen, toggle] = useToggle(false);
+
+  return (
+    <div>
+      <button onClick={() => toggle()}>Toggle</button>
+      <button onClick={() => toggle(true)}>Open</button>
+      <button onClick={() => toggle(false)}>Close</button>
+      {isOpen && <div>Modal Content</div>}
+    </div>
+  );
+}
+```
+
+---
+
 Every hook is validated with 100% test coverage using **Vitest** and **@testing-library/react** in a happy-dom environment.
 
 ```bash
