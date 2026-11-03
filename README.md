@@ -254,7 +254,33 @@ function SearchFilter({ onFilterChange }) {
 
 ---
 
-### 8. `useToggle`
+### 8. `useThrottledState`
+Dual-state synchronization for high-frequency continuous inputs (scroll positions, viewport dimensions, slider scrubs): provides an immediate value for 60fps local UI rendering alongside a throttled state updated at most once every `waitMs` milliseconds with lifecycle handles (`flush`, `cancel`, `isPending`, `reset`).
+
+```tsx
+import { useThrottledState } from '@imaqib101/react-concurrency-kit';
+
+function ScrollCoordinator() {
+  const [throttledY, setScrollY, { immediate, isPending, flush, reset }] = useThrottledState(0, 100);
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    setScrollY(e.currentTarget.scrollTop);
+  };
+
+  return (
+    <div>
+      <p>Live: {immediate}px | Throttled API sync: {throttledY}px</p>
+      {isPending() && <span>Syncing...</span>}
+      <button onClick={flush}>Sync Immediately</button>
+      <button onClick={() => reset(0)}>Reset</button>
+    </div>
+  );
+}
+```
+
+---
+
+### 9. `useToggle`
 Ergonomic boolean toggle state manager with support for explicit truthy/falsy overrides.
 
 ```tsx

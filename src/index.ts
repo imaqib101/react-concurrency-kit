@@ -38,6 +38,12 @@ export {
 } from './hooks/useThrottledCallback';
 
 export {
+  useThrottledState,
+  type UseThrottledStateOptions,
+  type ThrottledStateControls,
+} from './hooks/useThrottledState';
+
+export {
   useAsyncQueue,
   type QueueItemStatus,
   type QueueItem,
