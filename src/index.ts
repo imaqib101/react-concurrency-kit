@@ -44,6 +44,14 @@ export {
 } from './hooks/useThrottledState';
 
 export {
+  useAsyncState,
+  type UseAsyncStateOptions,
+  type AsyncStateStatus,
+  type AsyncStateSnapshot,
+  type UseAsyncStateReturn,
+} from './hooks/useAsyncState';
+
+export {
   useAsyncQueue,
   type QueueItemStatus,
   type QueueItem,

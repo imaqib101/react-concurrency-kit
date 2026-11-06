@@ -280,7 +280,42 @@ function ScrollCoordinator() {
 
 ---
 
-### 9. `useToggle`
+### 9. `useAsyncState`
+Robust promise execution manager featuring native `AbortSignal` cancellation, race condition prevention (stale requests discarded), configurable timeouts, and full status state flags (`idle`, `pending`, `success`, `error`).
+
+```tsx
+import { useAsyncState } from '@imaqib101/react-concurrency-kit';
+
+function UserProfile({ userId }: { userId: string }) {
+  const { data, isLoading, isError, error, execute, abort, reset } = useAsyncState(
+    async (signal, id: string) => {
+      const res = await fetch(`/api/users/${id}`, { signal });
+      if (!res.ok) throw new Error('Failed to load profile');
+      return res.json();
+    },
+    {
+      timeoutMs: 8000,
+      onSuccess: (user) => console.log('Loaded:', user),
+    }
+  );
+
+  return (
+    <div>
+      <button onClick={() => execute(userId)}>Fetch Profile</button>
+      <button onClick={abort} disabled={!isLoading}>Cancel</button>
+      <button onClick={reset}>Clear</button>
+
+      {isLoading && <p>Loading user data...</p>}
+      {isError && <p>Error: {error?.message}</p>}
+      {data && <div>Name: {data.name}</div>}
+    </div>
+  );
+}
+```
+
+---
+
+### 10. `useToggle`
 Ergonomic boolean toggle state manager with support for explicit truthy/falsy overrides.
 
 ```tsx
