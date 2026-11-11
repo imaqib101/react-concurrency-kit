@@ -337,6 +337,60 @@ function ModalToggle() {
 
 ---
 
+### 11. `useResilientPolling`
+Production-grade polling primitive with automatic document visibility pausing (`visibilitychange`), offline awareness (`navigator.onLine`), exponential backoff with jitter on network degradation, per-request abort timeouts, and granular execution lifecycle controls.
+
+```tsx
+import { useResilientPolling } from '@imaqib101/react-concurrency-kit';
+
+function DeploymentMonitor({ buildId }: { buildId: string }) {
+  const {
+    data: status,
+    isPolling,
+    isFetching,
+    isPaused,
+    pollCount,
+    failureCount,
+    pause,
+    resume,
+    refetch,
+  } = useResilientPolling(
+    async (signal) => {
+      const res = await fetch(`/api/deployments/${buildId}/status`, { signal });
+      if (!res.ok) throw new Error('Failed to retrieve deployment health');
+      return res.json();
+    },
+    {
+      intervalMs: 4000,
+      autoPauseOnHidden: true, // Pauses timer when user switches browser tabs
+      autoPauseOnOffline: true, // Pauses when device loses network
+      retryDelayMs: 1500,
+      backoffMultiplier: 2,
+      maxRetries: 5,
+      timeoutMs: 6000,
+      onSuccess: (data) => {
+        if (data.status === 'READY') console.log('Deployment live!');
+      },
+      onError: (err, retries) => {
+        console.warn(`Polling attempt failed (${retries}):`, err.message);
+      },
+    }
+  );
+
+  return (
+    <div>
+      <p>Status: {status?.state ?? 'Checking...'} (Polls: {pollCount})</p>
+      {isPaused && <span className="badge-warning">Paused (Background tab or offline)</span>}
+      {isFetching && <span className="spinner">Fetching...</span>}
+      <button onClick={() => refetch()}>Refresh Now</button>
+      <button onClick={isPaused ? resume : pause}>{isPaused ? 'Resume' : 'Pause'}</button>
+    </div>
+  );
+}
+```
+
+---
+
 Every hook is validated with 100% test coverage using **Vitest** and **@testing-library/react** in a happy-dom environment.
 
 ```bash

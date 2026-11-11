@@ -66,3 +66,11 @@ export {
 export {
   useToggle,
 } from './hooks/useToggle';
+
+export {
+  useResilientPolling,
+  type PollingStatus,
+  type UseResilientPollingOptions,
+  type UseResilientPollingReturn,
+} from './hooks/useResilientPolling';
+
