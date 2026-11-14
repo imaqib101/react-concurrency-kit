@@ -391,6 +391,48 @@ function DeploymentMonitor({ buildId }: { buildId: string }) {
 
 ---
 
+### 12. `useWebSocketStream`
+Resilient bi-directional WebSocket hook featuring connection state management, automatic reconnect with exponential jitter backoff, heartbeat timeout detection, outbound message queueing during connection handshakes, and historical message ring buffering.
+
+```tsx
+import { useWebSocketStream } from '@imaqib101/react-concurrency-kit';
+
+function ChatRoom({ roomId }: { roomId: string }) {
+  const {
+    status,
+    data: latestMessage,
+    history,
+    bufferedCount,
+    send,
+    disconnect,
+  } = useWebSocketStream<{ user: string; text: string }>({
+    url: `wss://api.example.com/rooms/${roomId}`,
+    heartbeatTimeoutMs: 30000,
+    maxRetries: 5,
+    bufferWhileConnecting: true,
+    parser: (raw) => JSON.parse(raw),
+  });
+
+  return (
+    <div>
+      <span className={`status-${status}`}>Status: {status}</span>
+      {bufferedCount > 0 && <span>Outbox queue: {bufferedCount}</span>}
+      <ul>
+        {history.map((msg, i) => (
+          <li key={i}><strong>{msg.user}:</strong> {msg.text}</li>
+        ))}
+      </ul>
+      <button onClick={() => send({ user: 'Aqib', text: 'Hello stream!' })}>
+        Send
+      </button>
+      <button onClick={disconnect}>Disconnect</button>
+    </div>
+  );
+}
+```
+
+---
+
 Every hook is validated with 100% test coverage using **Vitest** and **@testing-library/react** in a happy-dom environment.
 
 ```bash

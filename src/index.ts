@@ -74,3 +74,9 @@ export {
   type UseResilientPollingReturn,
 } from './hooks/useResilientPolling';
 
+export {
+  useWebSocketStream,
+  type UseWebSocketStreamOptions,
+  type UseWebSocketStreamReturn,
+} from './hooks/useWebSocketStream';
+
