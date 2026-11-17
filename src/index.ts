@@ -80,3 +80,12 @@ export {
   type UseWebSocketStreamReturn,
 } from './hooks/useWebSocketStream';
 
+export {
+  useIdleCallback,
+  type IdleCallbackDeadline,
+  type IdleTask,
+  type UseIdleCallbackOptions,
+  type UseIdleCallbackReturn,
+  type IdleCallbackStatus,
+} from './hooks/useIdleCallback';
+
