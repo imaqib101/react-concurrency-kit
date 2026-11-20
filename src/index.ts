@@ -89,3 +89,8 @@ export {
   type IdleCallbackStatus,
 } from './hooks/useIdleCallback';
 
+export {
+  useInterval,
+  type UseIntervalOptions,
+  type UseIntervalReturn,
+} from './hooks/useInterval';
