@@ -27,8 +27,8 @@ export function useNetworkStatus(): NetworkStatus {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    const handleOnline = () => setStatus(s => ({ ...s, online: true, ...getNetworkInfo() }));
-    const handleOffline = () => setStatus(s => ({ ...s, online: false, ...getNetworkInfo() }));
+    const handleOnline = () => setStatus({ ...getNetworkInfo(), online: true });
+    const handleOffline = () => setStatus({ ...getNetworkInfo(), online: false });
 
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
